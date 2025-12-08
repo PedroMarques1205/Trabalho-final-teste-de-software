@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GildedRoseRefactored.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">gilded-rose-kata</a> &gt; <a href="index.source.html" class="el_package">com.gildedrose</a> &gt; <span class="el_source">GildedRoseRefactored.java</span></div><h1>GildedRoseRefactored.java</h1><pre class="source lang-java linenums">package com.gildedrose;
+
+/**
+ * Sistema de atualização de qualidade do inventário Gilded Rose
+ * Refatorado usando Strategy Pattern e princípios SOLID
+ */
+class GildedRoseRefactored {
+    Item[] items;
+
+<span class="nc" id="L10">    public GildedRoseRefactored(Item[] items) {</span>
+<span class="nc" id="L11">        this.items = items;</span>
+<span class="nc" id="L12">    }</span>
+
+    public void updateQuality() {
+<span class="nc bnc" id="L15" title="All 2 branches missed.">        for (Item item : items) {</span>
+<span class="nc" id="L16">            ItemUpdater updater = ItemUpdaterFactory.getUpdater(item);</span>
+<span class="nc" id="L17">            updater.update(item);</span>
+        }
+<span class="nc" id="L19">    }</span>
+}
+
+/**
+ * Interface Strategy - Define o contrato para atualização de itens
+ */
+interface ItemUpdater {
+    void update(Item item);
+}
+
+/**
+ * Factory Pattern - Cria o updater apropriado baseado no tipo de item
+ */
+<span class="nc" id="L32">class ItemUpdaterFactory {</span>
+    public static ItemUpdater getUpdater(Item item) {
+<span class="nc bnc" id="L34" title="All 2 branches missed.">        if (item.name.equals(&quot;Aged Brie&quot;)) {</span>
+<span class="nc" id="L35">            return new AgedBrieUpdater();</span>
+<span class="nc bnc" id="L36" title="All 2 branches missed.">        } else if (item.name.equals(&quot;Backstage passes to a TAFKAL80ETC concert&quot;)) {</span>
+<span class="nc" id="L37">            return new BackstagePassUpdater();</span>
+<span class="nc bnc" id="L38" title="All 2 branches missed.">        } else if (item.name.equals(&quot;Sulfuras, Hand of Ragnaros&quot;)) {</span>
+<span class="nc" id="L39">            return new SulfurasUpdater();</span>
+<span class="nc bnc" id="L40" title="All 2 branches missed.">        } else if (item.name.startsWith(&quot;Conjured&quot;)) {</span>
+<span class="nc" id="L41">            return new ConjuredItemUpdater();</span>
+        } else {
+<span class="nc" id="L43">            return new NormalItemUpdater();</span>
+        }
+    }
+}
+
+/**
+ * Classe base abstrata com lógica comum
+ */
+<span class="nc" id="L51">abstract class BaseItemUpdater implements ItemUpdater {</span>
+    protected static final int MAX_QUALITY = 50;
+    protected static final int MIN_QUALITY = 0;
+
+    protected void decreaseSellIn(Item item) {
+<span class="nc" id="L56">        item.sellIn--;</span>
+<span class="nc" id="L57">    }</span>
+
+    protected void increaseQuality(Item item) {
+<span class="nc bnc" id="L60" title="All 2 branches missed.">        if (item.quality &lt; MAX_QUALITY) {</span>
+<span class="nc" id="L61">            item.quality++;</span>
+        }
+<span class="nc" id="L63">    }</span>
+
+    protected void decreaseQuality(Item item) {
+<span class="nc bnc" id="L66" title="All 2 branches missed.">        if (item.quality &gt; MIN_QUALITY) {</span>
+<span class="nc" id="L67">            item.quality--;</span>
+        }
+<span class="nc" id="L69">    }</span>
+
+    protected void setQualityToZero(Item item) {
+<span class="nc" id="L72">        item.quality = 0;</span>
+<span class="nc" id="L73">    }</span>
+
+    protected boolean hasExpired(Item item) {
+<span class="nc bnc" id="L76" title="All 2 branches missed.">        return item.sellIn &lt; 0;</span>
+    }
+}
+
+/**
+ * Updater para itens normais
+ * Regra: Quality degrada 1/dia antes de expirar, 2/dia depois
+ */
+<span class="nc" id="L84">class NormalItemUpdater extends BaseItemUpdater {</span>
+    @Override
+    public void update(Item item) {
+<span class="nc" id="L87">        decreaseQuality(item);</span>
+<span class="nc" id="L88">        decreaseSellIn(item);</span>
+        
+<span class="nc bnc" id="L90" title="All 2 branches missed.">        if (hasExpired(item)) {</span>
+<span class="nc" id="L91">            decreaseQuality(item);</span>
+        }
+<span class="nc" id="L93">    }</span>
+}
+
+/**
+ * Updater para Aged Brie
+ * Regra: Quality melhora 1/dia antes de expirar, 2/dia depois
+ */
+<span class="nc" id="L100">class AgedBrieUpdater extends BaseItemUpdater {</span>
+    @Override
+    public void update(Item item) {
+<span class="nc" id="L103">        increaseQuality(item);</span>
+<span class="nc" id="L104">        decreaseSellIn(item);</span>
+        
+<span class="nc bnc" id="L106" title="All 2 branches missed.">        if (hasExpired(item)) {</span>
+<span class="nc" id="L107">            increaseQuality(item);</span>
+        }
+<span class="nc" id="L109">    }</span>
+}
+
+/**
+ * Updater para Sulfuras (item lendário)
+ * Regra: Nunca muda quality ou sellIn
+ */
+<span class="nc" id="L116">class SulfurasUpdater extends BaseItemUpdater {</span>
+    @Override
+    public void update(Item item) {
+        // Sulfuras é um item lendário, nunca muda
+        // Quality sempre 80, sellIn não decresce
+<span class="nc" id="L121">    }</span>
+}
+
+/**
+ * Updater para Backstage Passes
+ * Regra complexa:
+ * - +1 quality quando sellIn &gt; 10
+ * - +2 quality quando 5 &lt; sellIn &lt;= 10
+ * - +3 quality quando 0 &lt; sellIn &lt;= 5
+ * - 0 quality quando sellIn &lt; 0
+ */
+<span class="nc" id="L132">class BackstagePassUpdater extends BaseItemUpdater {</span>
+    @Override
+    public void update(Item item) {
+<span class="nc" id="L135">        increaseQuality(item);</span>
+        
+<span class="nc bnc" id="L137" title="All 2 branches missed.">        if (item.sellIn &lt;= 10) {</span>
+<span class="nc" id="L138">            increaseQuality(item);</span>
+        }
+        
+<span class="nc bnc" id="L141" title="All 2 branches missed.">        if (item.sellIn &lt;= 5) {</span>
+<span class="nc" id="L142">            increaseQuality(item);</span>
+        }
+        
+<span class="nc" id="L145">        decreaseSellIn(item);</span>
+        
+<span class="nc bnc" id="L147" title="All 2 branches missed.">        if (hasExpired(item)) {</span>
+<span class="nc" id="L148">            setQualityToZero(item);</span>
+        }
+<span class="nc" id="L150">    }</span>
+}
+
+/**
+ * Updater para itens Conjured (mágicos)
+ * Regra: Quality degrada 2x mais rápido que itens normais
+ */
+<span class="nc" id="L157">class ConjuredItemUpdater extends BaseItemUpdater {</span>
+    @Override
+    public void update(Item item) {
+<span class="nc" id="L160">        decreaseQuality(item);</span>
+<span class="nc" id="L161">        decreaseQuality(item);</span>
+<span class="nc" id="L162">        decreaseSellIn(item);</span>
+        
+<span class="nc bnc" id="L164" title="All 2 branches missed.">        if (hasExpired(item)) {</span>
+<span class="nc" id="L165">            decreaseQuality(item);</span>
+<span class="nc" id="L166">            decreaseQuality(item);</span>
+        }
+<span class="nc" id="L168">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

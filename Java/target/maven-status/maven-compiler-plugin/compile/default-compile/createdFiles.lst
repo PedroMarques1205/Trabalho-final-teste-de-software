@@ -1,0 +1,11 @@
+com\gildedrose\SulfurasUpdater.class
+com\gildedrose\AgedBrieUpdater.class
+com\gildedrose\BaseItemUpdater.class
+com\gildedrose\BackstagePassUpdater.class
+com\gildedrose\ItemUpdater.class
+com\gildedrose\GildedRose.class
+com\gildedrose\ConjuredItemUpdater.class
+com\gildedrose\ItemUpdaterFactory.class
+com\gildedrose\NormalItemUpdater.class
+com\gildedrose\GildedRoseRefactored.class
+com\gildedrose\Item.class
